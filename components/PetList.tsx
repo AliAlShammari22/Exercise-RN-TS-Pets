@@ -10,14 +10,30 @@ import pets from "@/data/pets";
 import PetItem from "./PetItem";
 
 const PetList = () => {
-  const petList = pets.map((pet) => <PetItem key={pet.id} pet={pet} />);
+  // const petList = pets.map((pet) => <PetItem key={pet.id} pet={pet} />);
+  const [query, setQuery] = useState("");
+  const petList = pets.map((pet) =>
+    pet.name.toLowerCase().includes(query.trim().toLowerCase()) ? (
+      <PetItem key={pet.id} pet={pet} />
+    ) : null
+  );
+  //---------------------------------
+  let [type, setType] = useState({ petList });
+
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       style={styles.containerStyle}
     >
       {/* Search Input */}
-      <TextInput placeholder="Search for a pet" style={styles.searchInput} />
+      <TextInput
+        placeholder="Search for a pet"
+        style={styles.searchInput}
+        value={query}
+        onChangeText={setQuery}
+      />
+
+      {/* …now render petList safely: */}
 
       {/* Filter by type */}
       <ScrollView horizontal contentContainerStyle={styles.filterContainer}>
