@@ -14,12 +14,6 @@ export default function PetList() {
   const [query, setQuery] = useState("");
   const [visiblePets, setVisiblePets] = useState(pets);
 
-  // Update visiblePets when the search query changes
-  useEffect(() => {
-    const q = query.trim().toLowerCase();
-    setVisiblePets(pets.filter((pet) => pet.name.toLowerCase().includes(q)));
-  }, [query]);
-
   return (
     <ScrollView
       contentContainerStyle={styles.container}
@@ -71,9 +65,13 @@ export default function PetList() {
       </ScrollView>
 
       {/* Render the filtered list */}
-      {visiblePets.map((pet) => (
-        <PetItem key={pet.id} pet={pet} />
-      ))}
+      {visiblePets
+        .filter((pet) =>
+          pet.name.toLowerCase().includes(query.trim().toLowerCase())
+        )
+        .map((pet) => (
+          <PetItem key={pet.id} pet={pet} />
+        ))}
     </ScrollView>
   );
 }
