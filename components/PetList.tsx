@@ -1,24 +1,24 @@
+import React, { useState, useEffect } from "react";
 import {
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from "react-native";
-import React, { useState } from "react";
 import pets from "@/data/pets";
 import PetItem from "./PetItem";
 
-const PetList = () => {
-  // const petList = pets.map((pet) => <PetItem key={pet.id} pet={pet} />);
+export default function PetList() {
   const [query, setQuery] = useState("");
-  const petList = pets.map((pet) =>
-    pet.name.toLowerCase().includes(query.trim().toLowerCase()) ? (
-      <PetItem key={pet.id} pet={pet} />
-    ) : null
-  );
-  //---------------------------------
-  let [type, setType] = useState({ petList });
+  const [visiblePets, setVisiblePets] = useState(pets);
+
+  // Update visiblePets when the search query changes
+  useEffect(() => {
+    const q = query.trim().toLowerCase();
+    setVisiblePets(pets.filter((pet) => pet.name.toLowerCase().includes(q)));
+  }, [query]);
 
   return (
     <ScrollView
@@ -33,31 +33,50 @@ const PetList = () => {
         onChangeText={setQuery}
       />
 
-      {/* …now render petList safely: */}
-
       {/* Filter by type */}
-      <ScrollView horizontal contentContainerStyle={styles.filterContainer}>
-        <TouchableOpacity style={styles.filterButton}>
+      <ScrollView
+        horizontal
+        contentContainerStyle={styles.filterContainer}
+        showsHorizontalScrollIndicator={false}
+      >
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setVisiblePets(pets)}
+        >
           <Text>All</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.filterButton}>
+
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setVisiblePets(pets.filter((p) => p.type === "Cat"))}
+        >
           <Text>Cat</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.filterButton}>
+
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() => setVisiblePets(pets.filter((p) => p.type === "Dog"))}
+        >
           <Text>Dog</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.filterButton}>
+
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={() =>
+            setVisiblePets(pets.filter((p) => p.type === "Rabbit"))
+          }
+        >
           <Text>Rabbit</Text>
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Pet List */}
-      {petList}
+      {/* Render the filtered list */}
+      {visiblePets.map((pet) => (
+        <PetItem key={pet.id} pet={pet} />
+      ))}
     </ScrollView>
   );
-};
-
-export default PetList;
+}
 
 const styles = StyleSheet.create({
   container: {
